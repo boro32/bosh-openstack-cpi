@@ -90,13 +90,13 @@ var _ = Describe("CreateVM", func() {
 	Describe("Run", func() {
 		BeforeEach(func() {
 			serverService.CreateID = "fake-server-id"
-			flavorService.FindFound = true
+			flavorService.FindByNameFound = true
 			imageService.FindFound = true
 			keypairService.FindFound = true
 
 			volumeService.FindVolume = volume.Volume{AvailabilityZone: "fake-volume-availability-zone"}
 			imageService.FindImage = image.Image{ID: "fake-image-id"}
-			flavorService.FindFlavor = flavor.Flavor{ID: "fake-flavor-id"}
+			flavorService.FindByNameFlavor = flavor.Flavor{ID: "fake-flavor-id"}
 			keypairService.FindKeyPair = keypair.KeyPair{Name: "fake-keypair"}
 
 			cloudProps = VMCloudProperties{
@@ -176,7 +176,7 @@ var _ = Describe("CreateVM", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(volumeService.FindCalled).To(BeFalse())
 			Expect(imageService.FindCalled).To(BeTrue())
-			Expect(flavorService.FindCalled).To(BeTrue())
+			Expect(flavorService.FindByNameCalled).To(BeTrue())
 			Expect(keypairService.FindCalled).To(BeTrue())
 			Expect(serverService.CreateCalled).To(BeTrue())
 			Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -197,7 +197,7 @@ var _ = Describe("CreateVM", func() {
 			Expect(err.Error()).To(ContainSubstring("fake-image-service-error"))
 			Expect(volumeService.FindCalled).To(BeFalse())
 			Expect(imageService.FindCalled).To(BeTrue())
-			Expect(flavorService.FindCalled).To(BeFalse())
+			Expect(flavorService.FindByNameCalled).To(BeFalse())
 			Expect(keypairService.FindCalled).To(BeFalse())
 			Expect(serverService.CreateCalled).To(BeFalse())
 			Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -213,7 +213,7 @@ var _ = Describe("CreateVM", func() {
 			Expect(err.Error()).To(ContainSubstring("Stemcell 'fake-stemcell-id' does not exists"))
 			Expect(volumeService.FindCalled).To(BeFalse())
 			Expect(imageService.FindCalled).To(BeTrue())
-			Expect(flavorService.FindCalled).To(BeFalse())
+			Expect(flavorService.FindByNameCalled).To(BeFalse())
 			Expect(keypairService.FindCalled).To(BeFalse())
 			Expect(serverService.CreateCalled).To(BeFalse())
 			Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -229,7 +229,7 @@ var _ = Describe("CreateVM", func() {
 			Expect(err.Error()).To(ContainSubstring("'flavor' must be provided"))
 			Expect(volumeService.FindCalled).To(BeFalse())
 			Expect(imageService.FindCalled).To(BeTrue())
-			Expect(flavorService.FindCalled).To(BeFalse())
+			Expect(flavorService.FindByNameCalled).To(BeFalse())
 			Expect(keypairService.FindCalled).To(BeFalse())
 			Expect(serverService.CreateCalled).To(BeFalse())
 			Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -238,14 +238,14 @@ var _ = Describe("CreateVM", func() {
 		})
 
 		It("returns an error if flavorService find call returns an error", func() {
-			flavorService.FindErr = errors.New("fake-flavor-service-error")
+			flavorService.FindByNameErr = errors.New("fake-flavor-service-error")
 
 			_, err = createVM.Run("fake-agent-id", "fake-stemcell-id", cloudProps, networks, disks, env)
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("fake-flavor-service-error"))
 			Expect(volumeService.FindCalled).To(BeFalse())
 			Expect(imageService.FindCalled).To(BeTrue())
-			Expect(flavorService.FindCalled).To(BeTrue())
+			Expect(flavorService.FindByNameCalled).To(BeTrue())
 			Expect(keypairService.FindCalled).To(BeFalse())
 			Expect(serverService.CreateCalled).To(BeFalse())
 			Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -254,14 +254,14 @@ var _ = Describe("CreateVM", func() {
 		})
 
 		It("returns an error if flavor is not found", func() {
-			flavorService.FindFound = false
+			flavorService.FindByNameFound = false
 
 			_, err = createVM.Run("fake-agent-id", "fake-stemcell-id", cloudProps, networks, disks, env)
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("Flavor 'fake-flavor' does not exists"))
 			Expect(volumeService.FindCalled).To(BeFalse())
 			Expect(imageService.FindCalled).To(BeTrue())
-			Expect(flavorService.FindCalled).To(BeTrue())
+			Expect(flavorService.FindByNameCalled).To(BeTrue())
 			Expect(keypairService.FindCalled).To(BeFalse())
 			Expect(serverService.CreateCalled).To(BeFalse())
 			Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -277,7 +277,7 @@ var _ = Describe("CreateVM", func() {
 			Expect(err.Error()).To(ContainSubstring("fake-keypair-service-error"))
 			Expect(volumeService.FindCalled).To(BeFalse())
 			Expect(imageService.FindCalled).To(BeTrue())
-			Expect(flavorService.FindCalled).To(BeTrue())
+			Expect(flavorService.FindByNameCalled).To(BeTrue())
 			Expect(keypairService.FindCalled).To(BeTrue())
 			Expect(serverService.CreateCalled).To(BeFalse())
 			Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -293,7 +293,7 @@ var _ = Describe("CreateVM", func() {
 			Expect(err.Error()).To(ContainSubstring("KeyPair 'fake-default-keypair' does not exists"))
 			Expect(volumeService.FindCalled).To(BeFalse())
 			Expect(imageService.FindCalled).To(BeTrue())
-			Expect(flavorService.FindCalled).To(BeTrue())
+			Expect(flavorService.FindByNameCalled).To(BeTrue())
 			Expect(keypairService.FindCalled).To(BeTrue())
 			Expect(serverService.CreateCalled).To(BeFalse())
 			Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -309,7 +309,7 @@ var _ = Describe("CreateVM", func() {
 			Expect(err.Error()).To(ContainSubstring("fake-server-service-error"))
 			Expect(volumeService.FindCalled).To(BeFalse())
 			Expect(imageService.FindCalled).To(BeTrue())
-			Expect(flavorService.FindCalled).To(BeTrue())
+			Expect(flavorService.FindByNameCalled).To(BeTrue())
 			Expect(keypairService.FindCalled).To(BeTrue())
 			Expect(serverService.CreateCalled).To(BeTrue())
 			Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -325,7 +325,7 @@ var _ = Describe("CreateVM", func() {
 			Expect(err.Error()).To(ContainSubstring("fake-server-service-error"))
 			Expect(volumeService.FindCalled).To(BeFalse())
 			Expect(imageService.FindCalled).To(BeTrue())
-			Expect(flavorService.FindCalled).To(BeTrue())
+			Expect(flavorService.FindByNameCalled).To(BeTrue())
 			Expect(keypairService.FindCalled).To(BeTrue())
 			Expect(serverService.CreateCalled).To(BeTrue())
 			Expect(serverService.CleanUpCalled).To(BeTrue())
@@ -341,7 +341,7 @@ var _ = Describe("CreateVM", func() {
 			Expect(err.Error()).To(ContainSubstring("fake-registry-client-error"))
 			Expect(volumeService.FindCalled).To(BeFalse())
 			Expect(imageService.FindCalled).To(BeTrue())
-			Expect(flavorService.FindCalled).To(BeTrue())
+			Expect(flavorService.FindByNameCalled).To(BeTrue())
 			Expect(keypairService.FindCalled).To(BeTrue())
 			Expect(serverService.CreateCalled).To(BeTrue())
 			Expect(serverService.CleanUpCalled).To(BeTrue())
@@ -360,7 +360,7 @@ var _ = Describe("CreateVM", func() {
 				Expect(err).NotTo(HaveOccurred())
 				Expect(volumeService.FindCalled).To(BeFalse())
 				Expect(imageService.FindCalled).To(BeTrue())
-				Expect(flavorService.FindCalled).To(BeTrue())
+				Expect(flavorService.FindByNameCalled).To(BeTrue())
 				Expect(keypairService.FindCalled).To(BeTrue())
 				Expect(serverService.CreateCalled).To(BeTrue())
 				Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -385,7 +385,7 @@ var _ = Describe("CreateVM", func() {
 				Expect(err).NotTo(HaveOccurred())
 				Expect(volumeService.FindCalled).To(BeFalse())
 				Expect(imageService.FindCalled).To(BeTrue())
-				Expect(flavorService.FindCalled).To(BeTrue())
+				Expect(flavorService.FindByNameCalled).To(BeTrue())
 				Expect(keypairService.FindCalled).To(BeTrue())
 				Expect(serverService.CreateCalled).To(BeTrue())
 				Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -411,7 +411,7 @@ var _ = Describe("CreateVM", func() {
 				Expect(err).NotTo(HaveOccurred())
 				Expect(volumeService.FindCalled).To(BeTrue())
 				Expect(imageService.FindCalled).To(BeTrue())
-				Expect(flavorService.FindCalled).To(BeTrue())
+				Expect(flavorService.FindByNameCalled).To(BeTrue())
 				Expect(keypairService.FindCalled).To(BeTrue())
 				Expect(serverService.CreateCalled).To(BeTrue())
 				Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -432,7 +432,7 @@ var _ = Describe("CreateVM", func() {
 				Expect(err.Error()).To(ContainSubstring("fake-volume-service-error"))
 				Expect(volumeService.FindCalled).To(BeTrue())
 				Expect(imageService.FindCalled).To(BeFalse())
-				Expect(flavorService.FindCalled).To(BeFalse())
+				Expect(flavorService.FindByNameCalled).To(BeFalse())
 				Expect(keypairService.FindCalled).To(BeFalse())
 				Expect(serverService.CreateCalled).To(BeFalse())
 				Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -448,7 +448,7 @@ var _ = Describe("CreateVM", func() {
 				Expect(err.Error()).To(Equal(api.NewDiskNotFoundError("fake-volume-1", false).Error()))
 				Expect(volumeService.FindCalled).To(BeTrue())
 				Expect(imageService.FindCalled).To(BeFalse())
-				Expect(flavorService.FindCalled).To(BeFalse())
+				Expect(flavorService.FindByNameCalled).To(BeFalse())
 				Expect(keypairService.FindCalled).To(BeFalse())
 				Expect(serverService.CreateCalled).To(BeFalse())
 				Expect(serverService.CleanUpCalled).To(BeFalse())
@@ -467,7 +467,7 @@ var _ = Describe("CreateVM", func() {
 					Expect(err.Error()).To(ContainSubstring("can't use multiple availability zones:"))
 					Expect(volumeService.FindCalled).To(BeTrue())
 					Expect(imageService.FindCalled).To(BeFalse())
-					Expect(flavorService.FindCalled).To(BeFalse())
+					Expect(flavorService.FindByNameCalled).To(BeFalse())
 					Expect(keypairService.FindCalled).To(BeFalse())
 					Expect(serverService.CreateCalled).To(BeFalse())
 					Expect(serverService.CleanUpCalled).To(BeFalse())

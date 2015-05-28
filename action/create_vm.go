@@ -92,7 +92,7 @@ func (cv CreateVM) Run(agentID string, stemcellCID StemcellCID, cloudProps VMClo
 	if cloudProps.Flavor == "" {
 		return "", bosherr.WrapError(err, "Creating vm: 'flavor' must be provided")
 	}
-	flavor, found, err := cv.flavorService.Find(cloudProps.Flavor)
+	flavor, found, err := cv.flavorService.FindByName(cloudProps.Flavor)
 	if err != nil {
 		return "", bosherr.WrapError(err, "Creating vm")
 	}
