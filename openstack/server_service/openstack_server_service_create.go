@@ -59,7 +59,8 @@ func (i OpenStackServerService) Create(serverProps *Properties, networks Network
 		},
 	}
 
-	i.logger.Debug(openstackServerServiceLogTag, "Creating OpenStack Server with params: %#v", createOpts)
+	serverOpts, _ := createOpts.ToServerCreateMap()
+	i.logger.Debug(openstackServerServiceLogTag, "Creating OpenStack Server with params: %#v", serverOpts)
 	server, err := servers.Create(i.computeService, createOpts).Extract()
 	if err != nil {
 		i.logger.Debug(openstackServerServiceLogTag, "Failed to create OpenStack Server: %#v", err)
