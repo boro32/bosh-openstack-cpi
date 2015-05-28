@@ -11,6 +11,7 @@ const openstackVolumeServiceLogTag = "OpenStackVolumeService"
 const openstackVolumeNamePrefix = "volume"
 const openstackVolumeDescription = "Volume managed by BOSH"
 const openstackVolumeReadyStatus = "available"
+const openstackVolumeErrorStatus = "error"
 
 type OpenStackVolumeService struct {
 	blockstorageService *gophercloud.ServiceClient

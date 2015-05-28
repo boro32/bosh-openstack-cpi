@@ -10,7 +10,8 @@ import (
 const openstackImageServiceLogTag = "OpenStackImageService"
 const openstackImageNamePrefix = "stemcell"
 const openstackImageDescription = "Image managed by BOSH"
-const openstackImageReadyStatus = "READY"
+const openstackImageReadyStatus = "active"
+const openstackImageErrorStatus = "killed"
 
 type OpenStackImageService struct {
 	computeService *gophercloud.ServiceClient

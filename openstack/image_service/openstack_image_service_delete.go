@@ -15,7 +15,7 @@ func (i OpenStackImageService) Delete(id string) error {
 		return bosherr.WrapErrorf(err, "OpenStack Image '%s' does not exists", id)
 	}
 
-	if image.Status != openstackImageReadyStatus {
+	if image.Status != openstackImageReadyStatus && image.Status != openstackImageErrorStatus {
 		return bosherr.WrapErrorf(err, "Cannot delete OpenStack Image '%s', status is '%s'", id, image.Status)
 	}
 

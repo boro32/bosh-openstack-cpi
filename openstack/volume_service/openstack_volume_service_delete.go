@@ -16,7 +16,7 @@ func (v OpenStackVolumeService) Delete(id string) error {
 		return api.NewDiskNotFoundError(id, false)
 	}
 
-	if volume.Status != openstackVolumeReadyStatus {
+	if volume.Status != openstackVolumeReadyStatus && volume.Status != openstackVolumeErrorStatus {
 		return bosherr.WrapErrorf(err, "Cannot delete OpenStack Volume '%s', status is '%s'", id, volume.Status)
 	}
 

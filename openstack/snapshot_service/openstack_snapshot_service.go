@@ -11,6 +11,7 @@ const openstackSnapshotServiceLogTag = "OpenStackSnapshotService"
 const openstackSnapshotNamePrefix = "snapshot"
 const openstackSnapshotDescription = "Snapshot managed by BOSH"
 const openstackSnapshotReadyStatus = "available"
+const openstackSnapshotErrorStatus = "error"
 
 type OpenStackSnapshotService struct {
 	blockstorageService *gophercloud.ServiceClient

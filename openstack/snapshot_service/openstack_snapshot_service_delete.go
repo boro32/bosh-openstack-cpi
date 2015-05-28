@@ -15,7 +15,7 @@ func (s OpenStackSnapshotService) Delete(id string) error {
 		return bosherr.WrapErrorf(err, "OpenStack Snapshot '%s' does not exists", id)
 	}
 
-	if snapshot.Status != openstackSnapshotReadyStatus {
+	if snapshot.Status != openstackSnapshotReadyStatus && snapshot.Status != openstackSnapshotErrorStatus {
 		return bosherr.WrapErrorf(err, "Cannot delete OpenStack Snapshot '%s', status is '%s'", id, snapshot.Status)
 	}
 
