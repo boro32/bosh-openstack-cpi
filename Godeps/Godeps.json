@@ -1,0 +1,52 @@
+{
+	"ImportPath": "github.com/frodenas/bosh-openstack-cpi",
+	"GoVersion": "go1.4.2",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/cloudfoundry/bosh-utils/errors",
+			"Rev": "860ec42f3966efe5cce25381aa4eb980b1da36b9"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry/bosh-utils/logger",
+			"Rev": "860ec42f3966efe5cce25381aa4eb980b1da36b9"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry/bosh-utils/system",
+			"Rev": "860ec42f3966efe5cce25381aa4eb980b1da36b9"
+		},
+		{
+			"ImportPath": "github.com/cloudfoundry/bosh-utils/uuid",
+			"Rev": "860ec42f3966efe5cce25381aa4eb980b1da36b9"
+		},
+		{
+			"ImportPath": "github.com/frodenas/bosh-registry/client",
+			"Rev": "3c0c475b9ad5f9fe68844f2de069cfd7050fff1a"
+		},
+		{
+			"ImportPath": "github.com/mitchellh/mapstructure",
+			"Rev": "442e588f213303bec7936deba67901f8fc8f18b1"
+		},
+		{
+			"ImportPath": "github.com/nu7hatch/gouuid",
+			"Rev": "179d4d0c4d8d407a32af483c2354df1d2c91e6c3"
+		},
+		{
+			"ImportPath": "github.com/onsi/ginkgo",
+			"Comment": "v1.1.0-28-g7d3d52b",
+			"Rev": "7d3d52b3a3a79d745c2a03ee81b5bc2086642201"
+		},
+		{
+			"ImportPath": "github.com/onsi/gomega",
+			"Comment": "v1.0-37-gb14a2ac",
+			"Rev": "b14a2ac7124392baa05fa8f0fc17dd6b492c0970"
+		},
+		{
+			"ImportPath": "github.com/rackspace/gophercloud",
+			"Comment": "v1.0.0-593-gfab1f3d",
+			"Rev": "fab1f3d270f58c199398e892c2c9c234fe2147d8"
+		}
+	]
+}
