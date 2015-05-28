@@ -32,8 +32,7 @@ func (v OpenStackVolumeService) Create(size int, volumeType string, availability
 }
 
 func (v OpenStackVolumeService) cleanUp(id string) {
-	err := v.Delete(id)
-	if err != nil {
+	if err := v.Delete(id); err != nil {
 		v.logger.Debug(openstackVolumeServiceLogTag, "Failed cleaning up OpenStack Volume '%s': %#v", id, err)
 	}
 }

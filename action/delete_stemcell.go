@@ -19,8 +19,7 @@ func NewDeleteStemcell(
 }
 
 func (ds DeleteStemcell) Run(stemcellCID StemcellCID) (interface{}, error) {
-	err := ds.imageService.Delete(string(stemcellCID))
-	if err != nil {
+	if err := ds.imageService.Delete(string(stemcellCID)); err != nil {
 		return nil, bosherr.WrapErrorf(err, "Deleting stemcell '%s'", stemcellCID)
 	}
 

@@ -23,13 +23,11 @@ func NewConfigFromPath(path string, fs boshsys.FileSystem) (Config, error) {
 		return config, bosherr.WrapErrorf(err, "Reading config %s", path)
 	}
 
-	err = json.Unmarshal(bytes, &config)
-	if err != nil {
+	if err = json.Unmarshal(bytes, &config); err != nil {
 		return config, bosherr.WrapError(err, "Unmarshalling config")
 	}
 
-	err = config.Validate()
-	if err != nil {
+	if err = config.Validate(); err != nil {
 		return config, bosherr.WrapError(err, "Validating config")
 	}
 
@@ -37,13 +35,11 @@ func NewConfigFromPath(path string, fs boshsys.FileSystem) (Config, error) {
 }
 
 func (c Config) Validate() error {
-	err := c.OpenStack.Validate()
-	if err != nil {
+	if err := c.OpenStack.Validate(); err != nil {
 		return bosherr.WrapError(err, "Validating OpenStack configuration")
 	}
 
-	err = c.Actions.Validate()
-	if err != nil {
+	if err := c.Actions.Validate(); err != nil {
 		return bosherr.WrapError(err, "Validating Actions configuration")
 	}
 

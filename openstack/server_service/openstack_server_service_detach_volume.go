@@ -37,8 +37,7 @@ func (i OpenStackServerService) DetachVolume(id string, volumeID string) error {
 
 	// Detach the volume
 	i.logger.Debug(openstackServerServiceLogTag, "Detaching OpenStack Volume '%s' from OpenStack Server '%s'", volumeID, id)
-	err = volumeattach.Delete(i.computeService, id, volumeAttachmentID).ExtractErr()
-	if err != nil {
+	if err = volumeattach.Delete(i.computeService, id, volumeAttachmentID).ExtractErr(); err != nil {
 		return bosherr.WrapErrorf(err, "Failed to detach OpenStack Volume '%s' from OpenStack Server '%s'", volumeID, id)
 	}
 

@@ -21,8 +21,7 @@ func (v OpenStackVolumeService) Delete(id string) error {
 	}
 
 	v.logger.Debug(openstackVolumeServiceLogTag, "Deleting OpenStack Volume '%s'", id)
-	err = volumes.Delete(v.blockstorageService, id).ExtractErr()
-	if err != nil {
+	if err = volumes.Delete(v.blockstorageService, id).ExtractErr(); err != nil {
 		return bosherr.WrapErrorf(err, "Failed to delete OpenStack Volume '%s'", id)
 	}
 

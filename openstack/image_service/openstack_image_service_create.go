@@ -12,15 +12,14 @@ func (i OpenStackImageService) Create(imagePath string, description string) (str
 		return "", bosherr.WrapErrorf(err, "Generating random OpenStack Image name")
 	}
 
-	imageID := fmt.Sprintf("%s-%s", openstackImageNamePrefix, uuidStr)
 	// TODO: gophercloud does not support creating images
+	imageID := fmt.Sprintf("%s-%s", openstackImageNamePrefix, uuidStr)
 
 	return imageID, nil
 }
 
 func (i OpenStackImageService) cleanUp(id string) {
-	err := i.Delete(id)
-	if err != nil {
+	if err := i.Delete(id); err != nil {
 		i.logger.Debug(openstackImageServiceLogTag, "Failed cleaning up OpenStack Image '%s': %#v", id, err)
 	}
 }

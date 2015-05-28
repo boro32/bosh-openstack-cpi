@@ -14,8 +14,7 @@ func (i OpenStackServerService) SetMetadata(id string, serverMetadata Metadata) 
 	}
 
 	i.logger.Debug(openstackServerServiceLogTag, "Setting metadata for OpenStack Server '%s'", id)
-	_, err := servers.UpdateMetadata(i.computeService, id, updateMetadataOpts).Extract()
-	if err != nil {
+	if _, err := servers.UpdateMetadata(i.computeService, id, updateMetadataOpts).Extract(); err != nil {
 		errCode, _ := err.(*gophercloud.UnexpectedResponseCodeError)
 		if errCode.Actual == 404 {
 			return bosherr.WrapErrorf(err, "OpenStack Server '%s' does not exists", id)

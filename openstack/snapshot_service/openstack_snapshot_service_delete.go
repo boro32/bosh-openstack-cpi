@@ -20,8 +20,7 @@ func (s OpenStackSnapshotService) Delete(id string) error {
 	}
 
 	s.logger.Debug(openstackSnapshotServiceLogTag, "Deleting OpenStack Snapshot '%s'", id)
-	err = snapshots.Delete(s.blockstorageService, id).ExtractErr()
-	if err != nil {
+	if err = snapshots.Delete(s.blockstorageService, id).ExtractErr(); err != nil {
 		return bosherr.WrapErrorf(err, "Failed to delete OpenStack Snapshot '%s'", id)
 	}
 

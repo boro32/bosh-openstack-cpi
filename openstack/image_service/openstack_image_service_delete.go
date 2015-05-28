@@ -20,8 +20,7 @@ func (i OpenStackImageService) Delete(id string) error {
 	}
 
 	i.logger.Debug(openstackImageServiceLogTag, "Deleting OpenStack Image '%s'", id)
-	err = images.Delete(i.computeService, id).ExtractErr()
-	if err != nil {
+	if err = images.Delete(i.computeService, id).ExtractErr(); err != nil {
 		return bosherr.WrapErrorf(err, "Failed to delete OpenStack Image '%s'", id)
 	}
 

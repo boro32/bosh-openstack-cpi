@@ -35,8 +35,7 @@ func (s OpenStackSnapshotService) Create(volumeID string, description string) (s
 }
 
 func (s OpenStackSnapshotService) cleanUp(id string) {
-	err := s.Delete(id)
-	if err != nil {
+	if err := s.Delete(id); err != nil {
 		s.logger.Debug(openstackSnapshotServiceLogTag, "Failed cleaning up OpenStack Snapshot '%s': %#v", id, err)
 	}
 }

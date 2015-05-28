@@ -9,8 +9,7 @@ import (
 
 func (i OpenStackServerService) Reboot(id string) error {
 	i.logger.Debug(openstackServerServiceLogTag, "Rebooting OpenStack Server '%s'", id)
-	err := servers.Reboot(i.computeService, id, servers.SoftReboot).ExtractErr()
-	if err != nil {
+	if err := servers.Reboot(i.computeService, id, servers.SoftReboot).ExtractErr(); err != nil {
 		errCode, _ := err.(*gophercloud.UnexpectedResponseCodeError)
 		if errCode.Actual == 404 {
 			return bosherr.WrapErrorf(err, "OpenStack Server '%s' does not exists", id)
