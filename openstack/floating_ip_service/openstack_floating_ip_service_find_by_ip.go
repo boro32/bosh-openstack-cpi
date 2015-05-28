@@ -24,8 +24,8 @@ func (fip OpenStackFloatingIPService) FindByIP(ipAddress string) (FloatingIP, bo
 					ID: floatingIPItem.ID,
 					IP: floatingIPItem.IP,
 				}
+				return false, nil
 			}
-			return false, nil
 		}
 
 		return true, nil

@@ -24,8 +24,8 @@ func (vt OpenStackVolumeTypeService) FindByName(name string) (VolumeType, bool, 
 					ID:   volumeTypeItem.ID,
 					Name: volumeTypeItem.Name,
 				}
+				return false, nil
 			}
-			return false, nil
 		}
 
 		return true, nil
