@@ -3,7 +3,7 @@ package network
 import (
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
 
-	"github.com/rackspace/gophercloud/openstack/compute/v2/extensions/tenantnetworks"
+	"github.com/rackspace/gophercloud/openstack/networking/v2/networks"
 	"github.com/rackspace/gophercloud/pagination"
 )
 
@@ -11,9 +11,10 @@ func (n OpenStackNetworkService) FindByName(name string) (Network, bool, error) 
 	var network Network
 
 	n.logger.Debug(openstackNetworkServiceLogTag, "Finding OpenStack Network '%s'", name)
-	pager := tenantnetworks.List(n.computeService)
+	listOpts := networks.ListOpts{Name: name}
+	pager := networks.List(n.networkService, listOpts)
 	err := pager.EachPage(func(page pagination.Page) (bool, error) {
-		networkList, err := tenantnetworks.ExtractNetworks(page)
+		networkList, err := networks.ExtractNetworks(page)
 		if err != nil {
 			return false, err
 		}

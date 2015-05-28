@@ -18,6 +18,7 @@ type Config struct {
 	DefaultKeyPair               string   `json:"default_keypair,omitempty"`
 	DefaultSecurityGroups        []string `json:"default_security_groups,omitempty"`
 	DisableConfigDrive           bool     `json:"disable_config_drive,omitempty"`
+	DisableNeutron               bool     `json:"disable_neutron,omitempty"`
 	IgnoreServerAvailabilityZone bool     `json:"ignore_server_availability_zone,omitempty"`
 }
 

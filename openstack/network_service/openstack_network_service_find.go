@@ -4,12 +4,12 @@ import (
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
 
 	"github.com/rackspace/gophercloud"
-	"github.com/rackspace/gophercloud/openstack/compute/v2/extensions/tenantnetworks"
+	"github.com/rackspace/gophercloud/openstack/networking/v2/networks"
 )
 
 func (n OpenStackNetworkService) Find(id string) (Network, bool, error) {
 	n.logger.Debug(openstackNetworkServiceLogTag, "Finding OpenStack Network '%s'", id)
-	networkItem, err := tenantnetworks.Get(n.computeService, id).Extract()
+	networkItem, err := networks.Get(n.networkService, id).Extract()
 	if err != nil {
 		errCode, _ := err.(*gophercloud.UnexpectedResponseCodeError)
 		if errCode.Actual == 404 {

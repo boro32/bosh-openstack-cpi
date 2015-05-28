@@ -92,7 +92,7 @@ var _ = Describe("ConcreteFactory", func() {
 		)
 
 		networkService = network.NewOpenStackNetworkService(
-			openstackClient.ComputeService(),
+			openstackClient.NetworkService(),
 			logger,
 		)
 

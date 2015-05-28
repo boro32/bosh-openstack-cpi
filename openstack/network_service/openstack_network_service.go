@@ -9,16 +9,16 @@ import (
 const openstackNetworkServiceLogTag = "OpenStackNetworkService"
 
 type OpenStackNetworkService struct {
-	computeService *gophercloud.ServiceClient
+	networkService *gophercloud.ServiceClient
 	logger         boshlog.Logger
 }
 
 func NewOpenStackNetworkService(
-	computeService *gophercloud.ServiceClient,
+	networkService *gophercloud.ServiceClient,
 	logger boshlog.Logger,
 ) OpenStackNetworkService {
 	return OpenStackNetworkService{
-		computeService: computeService,
+		networkService: networkService,
 		logger:         logger,
 	}
 }

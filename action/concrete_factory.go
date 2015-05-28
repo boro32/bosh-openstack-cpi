@@ -51,7 +51,7 @@ func NewConcreteFactory(
 	)
 
 	networkService := network.NewOpenStackNetworkService(
-		openstackClient.ComputeService(),
+		openstackClient.NetworkService(),
 		logger,
 	)
 

@@ -36,6 +36,7 @@ Create a configuration file:
       "security_group"
     ],
     "disable_config_drive": false,
+    "disable_neutron": false,
     "ignore_server_availability_zone": false
   },
   "actions": {
@@ -82,6 +83,7 @@ Create a configuration file:
 | openstack.default_keypair                 | N          | String        | Default OpenStack Key Pair to be used when creating servers
 | openstack.default_security_groups         | N          | Array&lt;String&gt; | Default OpenStack Security Groups to be used when creating servers
 | openstack.disable_config_drive            | N          | Boolean       | Disable injecting OpenStack user data via the Config Drive (`false` by default)
+| openstack.disable_neutron                 | N          | Boolean       | Disable OpenStack Neutron interactions (`false` by default)
 | openstack.ignore_server_availability_zone | N          | Boolean       | Ignore OpenStack Server's Availability Zone when creating OpenStack volumes. Commonly used if Ceph is used for block storage (`false` by default)
 | actions.agent.mbus.endpoint               | Y          | String        | [BOSH Message Bus](http://bosh.io/docs/bosh-components.html#nats) URL used by deployed BOSH agents
 | actions.agent.ntp                         | Y          | Array&lt;String&gt; | List of NTP servers used by deployed BOSH agents

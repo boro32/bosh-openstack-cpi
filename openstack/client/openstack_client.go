@@ -51,9 +51,12 @@ func NewOpenStackClient(
 		return OpenStackClient{}, bosherr.WrapError(err, "Creating Block Storage Service")
 	}
 
-	networkService, err := openstack.NewNetworkV2(providerClient, endpointOpts)
-	if err != nil {
-		return OpenStackClient{}, bosherr.WrapError(err, "Creating Network Service")
+	var networkService *gophercloud.ServiceClient
+	if !config.DisableNeutron {
+		networkService, err = openstack.NewNetworkV2(providerClient, endpointOpts)
+		if err != nil {
+			return OpenStackClient{}, bosherr.WrapError(err, "Creating Network Service")
+		}
 	}
 
 	return OpenStackClient{
