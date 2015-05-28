@@ -3,6 +3,7 @@ package server
 import (
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
 
+	"github.com/rackspace/gophercloud"
 	"github.com/rackspace/gophercloud/openstack/compute/v2/extensions/volumeattach"
 	"github.com/rackspace/gophercloud/pagination"
 )
@@ -25,6 +26,11 @@ func (i OpenStackServerService) AttachedVolumes(id string) (AttachedVolumes, err
 		return true, nil
 	})
 	if err != nil {
+		errCode, _ := err.(*gophercloud.UnexpectedResponseCodeError)
+		if errCode.Actual == 404 {
+			return volumes, bosherr.WrapErrorf(err, "OpenStack Server '%s' does not exists", id)
+		}
+
 		return volumes, bosherr.WrapErrorf(err, "Failed to find OpenStack Volumes attached to OpenStack Server '%s'", id)
 	}
 
