@@ -6,6 +6,10 @@ This is an **experimental** external [BOSH CPI](http://bosh.io/docs/bosh-compone
 
 This is **NOT** presently a production ready CPI. This is a work in progress. It is suitable for experimentation and may not become supported in the future.
 
+This is **NOT** an official BOSH OpenStack CPI, and it is **NOT** intended to be compatible with the official one (the cloud properties names differ).
+
+The official and supported BOSH OpenStack CPI can be found at [https://github.com/cloudfoundry/bosh/tree/master/bosh_openstack_cpi](https://github.com/cloudfoundry/bosh/tree/master/bosh_openstack_cpi).
+
 ## Usage
 
 ### Deployment
