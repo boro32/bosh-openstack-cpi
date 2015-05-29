@@ -7,8 +7,8 @@ import (
 	"github.com/rackspace/gophercloud/openstack/compute/v2/extensions/floatingip"
 )
 
-func (fip OpenStackFloatingIPService) Find(id string) (FloatingIP, bool, error) {
-	fip.logger.Debug(openstackFloatingIPServiceLogTag, "Finding OpenStack Floating IP '%s'", id)
+func (fip OpenStackComputeFloatingIPService) Find(id string) (FloatingIP, bool, error) {
+	fip.logger.Debug(openstackComputeFloatingIPServiceLogTag, "Finding OpenStack Floating IP '%s'", id)
 	floatingIPItem, err := floatingip.Get(fip.computeService, id).Extract()
 	if err != nil {
 		errCode, _ := err.(*gophercloud.UnexpectedResponseCodeError)

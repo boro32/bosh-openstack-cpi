@@ -35,10 +35,18 @@ func NewConcreteFactory(
 		logger,
 	)
 
-	floatingIPService := floatingip.NewOpenStackFloatingIPService(
-		openstackClient.ComputeService(),
-		logger,
-	)
+	var floatingIPService floatingip.Service
+	if openstackClient.DisableNeutron() {
+		floatingIPService = floatingip.NewOpenStackComputeFloatingIPService(
+			openstackClient.ComputeService(),
+			logger,
+		)
+	} else {
+		floatingIPService = floatingip.NewOpenStackNetworkFloatingIPService(
+			openstackClient.NetworkService(),
+			logger,
+		)
+	}
 
 	imageService := image.NewOpenStackImageService(
 		openstackClient.ComputeService(),

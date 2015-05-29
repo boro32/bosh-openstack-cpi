@@ -6,18 +6,18 @@ import (
 	"github.com/rackspace/gophercloud"
 )
 
-const openstackFloatingIPServiceLogTag = "OpenStackFloatingIPService"
+const openstackComputeFloatingIPServiceLogTag = "OpenStackComputeFloatingIPService"
 
-type OpenStackFloatingIPService struct {
+type OpenStackComputeFloatingIPService struct {
 	computeService *gophercloud.ServiceClient
 	logger         boshlog.Logger
 }
 
-func NewOpenStackFloatingIPService(
+func NewOpenStackComputeFloatingIPService(
 	computeService *gophercloud.ServiceClient,
 	logger boshlog.Logger,
-) OpenStackFloatingIPService {
-	return OpenStackFloatingIPService{
+) OpenStackComputeFloatingIPService {
+	return OpenStackComputeFloatingIPService{
 		computeService: computeService,
 		logger:         logger,
 	}

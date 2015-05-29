@@ -77,10 +77,17 @@ var _ = Describe("ConcreteFactory", func() {
 			logger,
 		)
 
-		floatingIPService = floatingip.NewOpenStackFloatingIPService(
-			openstackClient.ComputeService(),
-			logger,
-		)
+		if openstackClient.DisableNeutron() {
+			floatingIPService = floatingip.NewOpenStackComputeFloatingIPService(
+				openstackClient.ComputeService(),
+				logger,
+			)
+		} else {
+			floatingIPService = floatingip.NewOpenStackNetworkFloatingIPService(
+				openstackClient.NetworkService(),
+				logger,
+			)
+		}
 
 		imageService = image.NewOpenStackImageService(
 			openstackClient.ComputeService(),

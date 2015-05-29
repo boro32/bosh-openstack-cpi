@@ -7,10 +7,10 @@ import (
 	"github.com/rackspace/gophercloud/pagination"
 )
 
-func (fip OpenStackFloatingIPService) FindByIP(ipAddress string) (FloatingIP, bool, error) {
+func (fip OpenStackComputeFloatingIPService) FindByIP(ipAddress string) (FloatingIP, bool, error) {
 	var floatingIP FloatingIP
 
-	fip.logger.Debug(openstackFloatingIPServiceLogTag, "Finding OpenStack Floating IP Address '%s'", ipAddress)
+	fip.logger.Debug(openstackComputeFloatingIPServiceLogTag, "Finding OpenStack Floating IP Address '%s'", ipAddress)
 	pager := floatingip.List(fip.computeService)
 	err := pager.EachPage(func(page pagination.Page) (bool, error) {
 		floatingIPList, err := floatingip.ExtractFloatingIPs(page)
