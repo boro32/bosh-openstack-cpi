@@ -96,8 +96,8 @@ func NewConcreteFactory(
 		networkService,
 		securityGroupService,
 		openstackClient.DefaultSecurityGroups(),
-		openstackClient.DisableNeutron(),
 		openstackClient.DisableConfigDrive(),
+		openstackClient.DisableNeutron(),
 		uuidGen,
 		logger,
 	)
