@@ -6,6 +6,7 @@ import (
 
 	"github.com/frodenas/bosh-openstack-cpi/openstack/floating_ip_service"
 	"github.com/frodenas/bosh-openstack-cpi/openstack/network_service"
+	"github.com/frodenas/bosh-openstack-cpi/openstack/security_group_service"
 
 	"github.com/rackspace/gophercloud"
 )
@@ -15,26 +16,29 @@ const openstackServerNamePrefix = "vm"
 const openstackServerDescription = "Server managed by BOSH"
 
 type OpenStackServerService struct {
-	computeService    *gophercloud.ServiceClient
-	floatingIPService floatingip.Service
-	networkService    network.Service
-	uuidGen           boshuuid.Generator
-	logger            boshlog.Logger
+	computeService       *gophercloud.ServiceClient
+	floatingIPService    floatingip.Service
+	networkService       network.Service
+	securityGroupService securitygroup.Service
+	uuidGen              boshuuid.Generator
+	logger               boshlog.Logger
 }
 
 func NewOpenStackServerService(
 	computeService *gophercloud.ServiceClient,
 	floatingIPService floatingip.Service,
 	networkService network.Service,
+	securityGroupService securitygroup.Service,
 	uuidGen boshuuid.Generator,
 	logger boshlog.Logger,
 ) OpenStackServerService {
 	return OpenStackServerService{
-		computeService:    computeService,
-		floatingIPService: floatingIPService,
-		networkService:    networkService,
-		uuidGen:           uuidGen,
-		logger:            logger,
+		computeService:       computeService,
+		floatingIPService:    floatingIPService,
+		networkService:       networkService,
+		securityGroupService: securityGroupService,
+		uuidGen:              uuidGen,
+		logger:               logger,
 	}
 }
 

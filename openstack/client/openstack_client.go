@@ -90,6 +90,10 @@ func (c OpenStackClient) DisableConfigDrive() bool {
 	return c.config.DisableConfigDrive
 }
 
+func (c OpenStackClient) DisableNeutron() bool {
+	return c.config.DisableNeutron
+}
+
 func (c OpenStackClient) IgnoreServerAvailabilityZone() bool {
 	return c.config.IgnoreServerAvailabilityZone
 }

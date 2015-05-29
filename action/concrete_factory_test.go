@@ -16,6 +16,7 @@ import (
 	"github.com/frodenas/bosh-openstack-cpi/openstack/image_service"
 	"github.com/frodenas/bosh-openstack-cpi/openstack/keypair_service"
 	"github.com/frodenas/bosh-openstack-cpi/openstack/network_service"
+	"github.com/frodenas/bosh-openstack-cpi/openstack/security_group_service"
 	"github.com/frodenas/bosh-openstack-cpi/openstack/server_service"
 	"github.com/frodenas/bosh-openstack-cpi/openstack/snapshot_service"
 	"github.com/frodenas/bosh-openstack-cpi/openstack/volume_service"
@@ -44,16 +45,17 @@ var _ = Describe("ConcreteFactory", func() {
 	)
 
 	var (
-		flavorService     flavor.Service
-		floatingIPService floatingip.Service
-		imageService      image.Service
-		keypairService    keypair.Service
-		networkService    network.Service
-		registryClient    registry.Client
-		serverService     server.Service
-		snapshotService   snapshot.Service
-		volumeService     volume.Service
-		volumeTypeService volumetype.Service
+		flavorService        flavor.Service
+		floatingIPService    floatingip.Service
+		imageService         image.Service
+		keypairService       keypair.Service
+		networkService       network.Service
+		registryClient       registry.Client
+		securityGroupService securitygroup.Service
+		serverService        server.Service
+		snapshotService      snapshot.Service
+		volumeService        volume.Service
+		volumeTypeService    volumetype.Service
 	)
 
 	BeforeEach(func() {
@@ -101,10 +103,23 @@ var _ = Describe("ConcreteFactory", func() {
 			logger,
 		)
 
+		if openstackClient.DisableNeutron() {
+			securityGroupService = securitygroup.NewOpenStackComputeSecurityGroupService(
+				openstackClient.ComputeService(),
+				logger,
+			)
+		} else {
+			securityGroupService = securitygroup.NewOpenStackNetworkSecurityGroupService(
+				openstackClient.NetworkService(),
+				logger,
+			)
+		}
+
 		serverService = server.NewOpenStackServerService(
 			openstackClient.ComputeService(),
 			floatingIPService,
 			networkService,
+			securityGroupService,
 			uuidGen,
 			logger,
 		)

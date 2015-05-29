@@ -11,6 +11,7 @@ import (
 	"github.com/frodenas/bosh-openstack-cpi/openstack/image_service"
 	"github.com/frodenas/bosh-openstack-cpi/openstack/keypair_service"
 	"github.com/frodenas/bosh-openstack-cpi/openstack/network_service"
+	"github.com/frodenas/bosh-openstack-cpi/openstack/security_group_service"
 	"github.com/frodenas/bosh-openstack-cpi/openstack/server_service"
 	"github.com/frodenas/bosh-openstack-cpi/openstack/snapshot_service"
 	"github.com/frodenas/bosh-openstack-cpi/openstack/volume_service"
@@ -60,10 +61,24 @@ func NewConcreteFactory(
 		logger,
 	)
 
+	var securityGroupService securitygroup.Service
+	if openstackClient.DisableNeutron() {
+		securityGroupService = securitygroup.NewOpenStackComputeSecurityGroupService(
+			openstackClient.ComputeService(),
+			logger,
+		)
+	} else {
+		securityGroupService = securitygroup.NewOpenStackNetworkSecurityGroupService(
+			openstackClient.NetworkService(),
+			logger,
+		)
+	}
+
 	serverService := server.NewOpenStackServerService(
 		openstackClient.ComputeService(),
 		floatingIPService,
 		networkService,
+		securityGroupService,
 		uuidGen,
 		logger,
 	)
