@@ -95,6 +95,7 @@ func NewConcreteFactory(
 		floatingIPService,
 		networkService,
 		securityGroupService,
+		openstackClient.DisableNeutron(),
 		uuidGen,
 		logger,
 	)

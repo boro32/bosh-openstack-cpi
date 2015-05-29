@@ -20,6 +20,7 @@ type OpenStackServerService struct {
 	floatingIPService    floatingip.Service
 	networkService       network.Service
 	securityGroupService securitygroup.Service
+	disableNeutron       bool
 	uuidGen              boshuuid.Generator
 	logger               boshlog.Logger
 }
@@ -29,6 +30,7 @@ func NewOpenStackServerService(
 	floatingIPService floatingip.Service,
 	networkService network.Service,
 	securityGroupService securitygroup.Service,
+	disableNeutron bool,
 	uuidGen boshuuid.Generator,
 	logger boshlog.Logger,
 ) OpenStackServerService {
@@ -37,6 +39,7 @@ func NewOpenStackServerService(
 		floatingIPService:    floatingIPService,
 		networkService:       networkService,
 		securityGroupService: securityGroupService,
+		disableNeutron:       disableNeutron,
 		uuidGen:              uuidGen,
 		logger:               logger,
 	}

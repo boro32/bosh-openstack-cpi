@@ -301,6 +301,20 @@ var _ = Describe("CreateVM", func() {
 			Expect(registryClient.UpdateCalled).To(BeFalse())
 		})
 
+		It("returns an error if networks are not valid", func() {
+			_, err = createVM.Run("fake-agent-id", "fake-stemcell-id", cloudProps, Networks{}, disks, env)
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(ContainSubstring("Creating VM"))
+			Expect(volumeService.FindCalled).To(BeFalse())
+			Expect(imageService.FindCalled).To(BeTrue())
+			Expect(flavorService.FindByNameCalled).To(BeTrue())
+			Expect(keypairService.FindCalled).To(BeTrue())
+			Expect(serverService.CreateCalled).To(BeFalse())
+			Expect(serverService.CleanUpCalled).To(BeFalse())
+			Expect(serverService.AddNetworkConfigurationCalled).To(BeFalse())
+			Expect(registryClient.UpdateCalled).To(BeFalse())
+		})
+
 		It("returns an error if serverService create call returns an error", func() {
 			serverService.CreateErr = errors.New("fake-server-service-error")
 

@@ -21,6 +21,15 @@ func (i OpenStackServerService) Create(serverProps *Properties, networks Network
 	}
 
 	serverName := fmt.Sprintf("%s-%s", openstackServerNamePrefix, uuidStr)
+	networksParams, err := i.createNetworksParams(networks)
+	if err != nil {
+		return "", err
+	}
+	securityGroupsParams, err := i.createSecurityGroupsParams(networks)
+	if err != nil {
+		return "", err
+	}
+
 	userdataParams, err := i.createUserdataParams(serverName, registryEndpoint, networks)
 	if err != nil {
 		return "", err
@@ -35,11 +44,11 @@ func (i OpenStackServerService) Create(serverProps *Properties, networks Network
 		Name:             serverName,
 		ImageRef:         serverProps.ImageID,
 		FlavorRef:        serverProps.FlavorID,
-		SecurityGroups:   []string{},
-		UserData:         userdataParams,
 		AvailabilityZone: serverProps.AvailabilityZone,
-		//Networks: "",
-		ConfigDrive: configDrive,
+		Networks:         networksParams,
+		SecurityGroups:   securityGroupsParams,
+		UserData:         userdataParams,
+		ConfigDrive:      configDrive,
 	}
 
 	createOpts = &keypairs.CreateOptsExt{
@@ -71,10 +80,56 @@ func (i OpenStackServerService) Create(serverProps *Properties, networks Network
 }
 
 func (i OpenStackServerService) CleanUp(id string) {
-	err := i.Delete(id)
-	if err != nil {
+	if err := i.Delete(id); err != nil {
 		i.logger.Debug(openstackServerServiceLogTag, "Failed cleaning up OpenStack Server '%s': %#v", id, err)
 	}
+}
+
+func (i OpenStackServerService) createNetworksParams(networks Networks) ([]servers.Network, error) {
+	var networksParams []servers.Network
+
+	if i.disableNeutron {
+		return networksParams, nil
+	}
+
+	for _, network := range networks {
+		if networkName := network.NetworkName(); networkName != "" {
+			net, found, err := i.networkService.FindByName(networkName)
+			if err != nil {
+				return networksParams, err
+			}
+			if !found {
+				return networksParams, bosherr.Errorf("OpenStack Network '%s' not found", networkName)
+			}
+			serverNetwork := servers.Network{UUID: net.ID}
+
+			if ipAddress := network.IPAddress(); ipAddress != "" {
+				serverNetwork.FixedIP = ipAddress
+			}
+
+			networksParams = append(networksParams, serverNetwork)
+		}
+	}
+
+	return networksParams, nil
+}
+
+func (i OpenStackServerService) createSecurityGroupsParams(networks Networks) ([]string, error) {
+	var securityGroupsParams []string
+
+	for _, securityGroup := range networks.SecurityGroupsList() {
+		_, found, err := i.securityGroupService.FindByName(securityGroup)
+		if err != nil {
+			return securityGroupsParams, err
+		}
+		if !found {
+			return securityGroupsParams, bosherr.Errorf("OpenStack Security Group '%s' not found", securityGroup)
+		}
+
+		securityGroupsParams = append(securityGroupsParams, securityGroup)
+	}
+
+	return securityGroupsParams, nil
 }
 
 func (i OpenStackServerService) createUserdataParams(name string, registryEndpoint string, networks Networks) ([]byte, error) {
@@ -82,7 +137,7 @@ func (i OpenStackServerService) createUserdataParams(name string, registryEndpoi
 	openstackRegistryEndpoint := OpenStackUserDataRegistryEndpoint{Endpoint: registryEndpoint}
 	openstackUserData := OpenStackUserData{Server: openstackServerName, Registry: openstackRegistryEndpoint}
 
-	if networkDNS := networks.DNS(); len(networkDNS) > 0 {
+	if networkDNS := networks.DNSList(); len(networkDNS) > 0 {
 		openstackUserData.DNS = OpenStackUserDataDNSItems{NameServer: networkDNS}
 	}
 
