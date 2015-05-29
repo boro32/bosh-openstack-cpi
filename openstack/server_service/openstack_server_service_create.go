@@ -129,7 +129,11 @@ func (i OpenStackServerService) createSecurityGroupsParams(networks Networks) ([
 		securityGroupsParams = append(securityGroupsParams, securityGroup)
 	}
 
-	return securityGroupsParams, nil
+	if len(securityGroupsParams) > 0 {
+		return securityGroupsParams, nil
+	}
+
+	return i.defaultSecurityGroups, nil
 }
 
 func (i OpenStackServerService) createUserdataParams(name string, registryEndpoint string, networks Networks) ([]byte, error) {

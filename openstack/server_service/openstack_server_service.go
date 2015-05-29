@@ -16,13 +16,14 @@ const openstackServerNamePrefix = "vm"
 const openstackServerDescription = "Server managed by BOSH"
 
 type OpenStackServerService struct {
-	computeService       *gophercloud.ServiceClient
-	floatingIPService    floatingip.Service
-	networkService       network.Service
-	securityGroupService securitygroup.Service
-	disableNeutron       bool
-	uuidGen              boshuuid.Generator
-	logger               boshlog.Logger
+	computeService        *gophercloud.ServiceClient
+	floatingIPService     floatingip.Service
+	networkService        network.Service
+	securityGroupService  securitygroup.Service
+	defaultSecurityGroups []string
+	disableNeutron        bool
+	uuidGen               boshuuid.Generator
+	logger                boshlog.Logger
 }
 
 func NewOpenStackServerService(
@@ -30,18 +31,20 @@ func NewOpenStackServerService(
 	floatingIPService floatingip.Service,
 	networkService network.Service,
 	securityGroupService securitygroup.Service,
+	defaultSecurityGroups []string,
 	disableNeutron bool,
 	uuidGen boshuuid.Generator,
 	logger boshlog.Logger,
 ) OpenStackServerService {
 	return OpenStackServerService{
-		computeService:       computeService,
-		floatingIPService:    floatingIPService,
-		networkService:       networkService,
-		securityGroupService: securityGroupService,
-		disableNeutron:       disableNeutron,
-		uuidGen:              uuidGen,
-		logger:               logger,
+		computeService:        computeService,
+		floatingIPService:     floatingIPService,
+		networkService:        networkService,
+		securityGroupService:  securityGroupService,
+		defaultSecurityGroups: defaultSecurityGroups,
+		disableNeutron:        disableNeutron,
+		uuidGen:               uuidGen,
+		logger:                logger,
 	}
 }
 

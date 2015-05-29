@@ -134,6 +134,7 @@ var _ = Describe("ConcreteFactory", func() {
 			floatingIPService,
 			networkService,
 			securityGroupService,
+			openstackClient.DefaultSecurityGroups(),
 			openstackClient.DisableNeutron(),
 			uuidGen,
 			logger,
