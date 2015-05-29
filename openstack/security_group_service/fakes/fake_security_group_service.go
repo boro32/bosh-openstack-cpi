@@ -16,9 +16,9 @@ type FakeSecurityGroupService struct {
 	FindByNameErr           error
 }
 
-func (sg *FakeSecurityGroupService) Find(id string) (securitygroup.VSecurityGroup, bool, error) {
+func (sg *FakeSecurityGroupService) Find(id string) (securitygroup.SecurityGroup, bool, error) {
 	sg.FindCalled = true
-	return sg.FindVSecurityGroup, sg.FindFound, sg.FindErr
+	return sg.FindSecurityGroup, sg.FindFound, sg.FindErr
 }
 
 func (sg *FakeSecurityGroupService) FindByName(name string) (securitygroup.SecurityGroup, bool, error) {
