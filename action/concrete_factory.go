@@ -97,6 +97,7 @@ func NewConcreteFactory(
 		securityGroupService,
 		openstackClient.DefaultSecurityGroups(),
 		openstackClient.DisableNeutron(),
+		openstackClient.DisableConfigDrive(),
 		uuidGen,
 		logger,
 	)
@@ -148,7 +149,6 @@ func NewConcreteFactory(
 				options.Registry,
 				options.Agent,
 				openstackClient.DefaultKeyPair(),
-				openstackClient.DisableConfigDrive(),
 			),
 			"configure_networks": NewConfigureNetworks(serverService, registryClient),
 			"delete_vm":          NewDeleteVM(serverService, registryClient),

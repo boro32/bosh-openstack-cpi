@@ -21,6 +21,7 @@ type OpenStackServerService struct {
 	networkService        network.Service
 	securityGroupService  securitygroup.Service
 	defaultSecurityGroups []string
+	disableConfigDrive    bool
 	disableNeutron        bool
 	uuidGen               boshuuid.Generator
 	logger                boshlog.Logger
@@ -32,6 +33,7 @@ func NewOpenStackServerService(
 	networkService network.Service,
 	securityGroupService securitygroup.Service,
 	defaultSecurityGroups []string,
+	disableConfigDrive bool,
 	disableNeutron bool,
 	uuidGen boshuuid.Generator,
 	logger boshlog.Logger,
@@ -42,6 +44,7 @@ func NewOpenStackServerService(
 		networkService:        networkService,
 		securityGroupService:  securityGroupService,
 		defaultSecurityGroups: defaultSecurityGroups,
+		disableConfigDrive:    disableConfigDrive,
 		disableNeutron:        disableNeutron,
 		uuidGen:               uuidGen,
 		logger:                logger,

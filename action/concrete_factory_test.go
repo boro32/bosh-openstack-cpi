@@ -135,6 +135,7 @@ var _ = Describe("ConcreteFactory", func() {
 			networkService,
 			securityGroupService,
 			openstackClient.DefaultSecurityGroups(),
+			openstackClient.DisableConfigDrive(),
 			openstackClient.DisableNeutron(),
 			uuidGen,
 			logger,
@@ -218,7 +219,6 @@ var _ = Describe("ConcreteFactory", func() {
 			options.Registry,
 			options.Agent,
 			openstackClient.DefaultKeyPair(),
-			openstackClient.DisableConfigDrive(),
 		)))
 	})
 

@@ -36,7 +36,6 @@ var _ = Describe("CreateVM", func() {
 		registryOptions          registry.ClientOptions
 		agentOptions             registry.AgentOptions
 		defaultKeyPair           string
-		disableConfigDrive       bool
 		expectedServerProperties *server.Properties
 		expectedServerNetworks   server.Networks
 		expectedAgentSettings    registry.AgentSettings
@@ -72,7 +71,6 @@ var _ = Describe("CreateVM", func() {
 			},
 		}
 		defaultKeyPair = "fake-default-keypair"
-		disableConfigDrive = true
 		createVM = NewCreateVM(
 			serverService,
 			flavorService,
@@ -83,7 +81,6 @@ var _ = Describe("CreateVM", func() {
 			registryOptions,
 			agentOptions,
 			defaultKeyPair,
-			disableConfigDrive,
 		)
 	})
 
@@ -128,11 +125,10 @@ var _ = Describe("CreateVM", func() {
 			}
 
 			expectedServerProperties = &server.Properties{
-				ImageID:            "fake-image-id",
-				FlavorID:           "fake-flavor-id",
-				AvailabilityZone:   "",
-				KeyPair:            defaultKeyPair,
-				DisableConfigDrive: disableConfigDrive,
+				ImageID:          "fake-image-id",
+				FlavorID:         "fake-flavor-id",
+				AvailabilityZone: "",
+				KeyPair:          defaultKeyPair,
 				SchedulerHints: server.SchedulerHintsProperties{
 					Group:           "fake-scheduler-hints-group",
 					DifferentHost:   []string{"fake-scheduler-hints-different-host"},

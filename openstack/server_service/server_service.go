@@ -24,12 +24,11 @@ type AttachedVolumes []string
 type Metadata map[string]interface{}
 
 type Properties struct {
-	ImageID            string
-	FlavorID           string
-	AvailabilityZone   string
-	KeyPair            string
-	DisableConfigDrive bool
-	SchedulerHints     SchedulerHintsProperties
+	ImageID          string
+	FlavorID         string
+	AvailabilityZone string
+	KeyPair          string
+	SchedulerHints   SchedulerHintsProperties
 }
 
 type SchedulerHintsProperties struct {

@@ -14,16 +14,15 @@ import (
 )
 
 type CreateVM struct {
-	serverService      server.Service
-	flavorService      flavor.Service
-	imageService       image.Service
-	keypairService     keypair.Service
-	volumeService      volume.Service
-	registryClient     registry.Client
-	registryOptions    registry.ClientOptions
-	agentOptions       registry.AgentOptions
-	defaultKeyPair     string
-	disableConfigDrive bool
+	serverService   server.Service
+	flavorService   flavor.Service
+	imageService    image.Service
+	keypairService  keypair.Service
+	volumeService   volume.Service
+	registryClient  registry.Client
+	registryOptions registry.ClientOptions
+	agentOptions    registry.AgentOptions
+	defaultKeyPair  string
 }
 
 func NewCreateVM(
@@ -36,19 +35,17 @@ func NewCreateVM(
 	registryOptions registry.ClientOptions,
 	agentOptions registry.AgentOptions,
 	defaultKeyPair string,
-	disableConfigDrive bool,
 ) CreateVM {
 	return CreateVM{
-		serverService:      serverService,
-		flavorService:      flavorService,
-		imageService:       imageService,
-		keypairService:     keypairService,
-		volumeService:      volumeService,
-		registryClient:     registryClient,
-		registryOptions:    registryOptions,
-		agentOptions:       agentOptions,
-		defaultKeyPair:     defaultKeyPair,
-		disableConfigDrive: disableConfigDrive,
+		serverService:   serverService,
+		flavorService:   flavorService,
+		imageService:    imageService,
+		keypairService:  keypairService,
+		volumeService:   volumeService,
+		registryClient:  registryClient,
+		registryOptions: registryOptions,
+		agentOptions:    agentOptions,
+		defaultKeyPair:  defaultKeyPair,
 	}
 }
 
@@ -121,11 +118,10 @@ func (cv CreateVM) Run(agentID string, stemcellCID StemcellCID, cloudProps VMClo
 
 	// Parse VM properties
 	serverProps := &server.Properties{
-		ImageID:            image.ID,
-		FlavorID:           flavor.ID,
-		AvailabilityZone:   availabilityZone,
-		KeyPair:            keyPair,
-		DisableConfigDrive: cv.disableConfigDrive,
+		ImageID:          image.ID,
+		FlavorID:         flavor.ID,
+		AvailabilityZone: availabilityZone,
+		KeyPair:          keyPair,
 		SchedulerHints: server.SchedulerHintsProperties{
 			Group:           cloudProps.SchedulerHints.Group,
 			DifferentHost:   cloudProps.SchedulerHints.DifferentHost,

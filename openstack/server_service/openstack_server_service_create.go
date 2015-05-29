@@ -36,7 +36,7 @@ func (i OpenStackServerService) Create(serverProps *Properties, networks Network
 	}
 
 	configDrive := true
-	if serverProps.DisableConfigDrive {
+	if i.disableConfigDrive {
 		configDrive = false
 	}
 
