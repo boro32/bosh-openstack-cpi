@@ -50,23 +50,8 @@ func (i OpenStackServerService) Create(serverProps *Properties, networks Network
 		UserData:         userdataParams,
 		ConfigDrive:      configDrive,
 	}
-
-	createOpts = &keypairs.CreateOptsExt{
-		createOpts,
-		serverProps.KeyPair,
-	}
-
-	createOpts = &schedulerhints.CreateOptsExt{
-		createOpts,
-		schedulerhints.SchedulerHints{
-			Group:           serverProps.SchedulerHints.Group,
-			DifferentHost:   serverProps.SchedulerHints.DifferentHost,
-			SameHost:        serverProps.SchedulerHints.SameHost,
-			Query:           serverProps.SchedulerHints.Query,
-			TargetCell:      serverProps.SchedulerHints.TargetCell,
-			BuildNearHostIP: serverProps.SchedulerHints.BuildNearHostIP,
-		},
-	}
+	createOpts = i.addKeyPairParams(createOpts, serverProps.KeyPair)
+	createOpts = i.addSchedulerHintsParams(createOpts, serverProps.SchedulerHints)
 
 	serverOpts, _ := createOpts.ToServerCreateMap()
 	i.logger.Debug(openstackServerServiceLogTag, "Creating OpenStack Server with params: %#v", serverOpts)
@@ -82,6 +67,52 @@ func (i OpenStackServerService) Create(serverProps *Properties, networks Network
 func (i OpenStackServerService) CleanUp(id string) {
 	if err := i.Delete(id); err != nil {
 		i.logger.Debug(openstackServerServiceLogTag, "Failed cleaning up OpenStack Server '%s': %#v", id, err)
+	}
+}
+
+func (i OpenStackServerService) addKeyPairParams(
+	createOpts servers.CreateOptsBuilder,
+	keypair string,
+) *keypairs.CreateOptsExt {
+	return &keypairs.CreateOptsExt{
+		createOpts,
+		keypair,
+	}
+}
+
+func (i OpenStackServerService) addSchedulerHintsParams(
+	createOpts servers.CreateOptsBuilder,
+	schedulerHintsProperties SchedulerHintsProperties,
+) *schedulerhints.CreateOptsExt {
+	var schedulerHints schedulerhints.SchedulerHints
+
+	if schedulerHintsProperties.Group != "" {
+		schedulerHints.Group = schedulerHintsProperties.Group
+	}
+
+	if schedulerHintsProperties.DifferentHost != nil {
+		schedulerHints.DifferentHost = schedulerHintsProperties.DifferentHost
+	}
+
+	if schedulerHintsProperties.SameHost != nil {
+		schedulerHints.SameHost = schedulerHintsProperties.SameHost
+	}
+
+	if schedulerHintsProperties.Query != nil {
+		schedulerHints.Query = schedulerHintsProperties.Query
+	}
+
+	if schedulerHintsProperties.TargetCell != "" {
+		schedulerHints.TargetCell = schedulerHintsProperties.TargetCell
+	}
+
+	if schedulerHintsProperties.BuildNearHostIP != "" {
+		schedulerHints.BuildNearHostIP = schedulerHintsProperties.BuildNearHostIP
+	}
+
+	return &schedulerhints.CreateOptsExt{
+		createOpts,
+		schedulerHints,
 	}
 }
 
