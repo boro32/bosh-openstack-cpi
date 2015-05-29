@@ -100,10 +100,17 @@ var _ = Describe("ConcreteFactory", func() {
 			logger,
 		)
 
-		networkService = network.NewOpenStackNetworkService(
-			openstackClient.NetworkService(),
-			logger,
-		)
+		if openstackClient.DisableNeutron() {
+			networkService = network.NewOpenStackComputeNetworkService(
+				openstackClient.ComputeService(),
+				logger,
+			)
+		} else {
+			networkService = network.NewOpenStackNetworkNetworkService(
+				openstackClient.NetworkService(),
+				logger,
+			)
+		}
 
 		registryClient = registry.NewHTTPClient(
 			options.Registry,

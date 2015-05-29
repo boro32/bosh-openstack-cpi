@@ -7,8 +7,8 @@ import (
 	"github.com/rackspace/gophercloud/openstack/networking/v2/networks"
 )
 
-func (n OpenStackNetworkService) Find(id string) (Network, bool, error) {
-	n.logger.Debug(openstackNetworkServiceLogTag, "Finding OpenStack Network '%s'", id)
+func (n OpenStackNetworkNetworkService) Find(id string) (Network, bool, error) {
+	n.logger.Debug(openstackNetworkNetworkServiceLogTag, "Finding OpenStack Network '%s'", id)
 	networkItem, err := networks.Get(n.networkService, id).Extract()
 	if err != nil {
 		errCode, _ := err.(*gophercloud.UnexpectedResponseCodeError)

@@ -59,10 +59,18 @@ func NewConcreteFactory(
 		logger,
 	)
 
-	networkService := network.NewOpenStackNetworkService(
-		openstackClient.NetworkService(),
-		logger,
-	)
+	var networkService network.Service
+	if openstackClient.DisableNeutron() {
+		networkService = network.NewOpenStackComputeNetworkService(
+			openstackClient.ComputeService(),
+			logger,
+		)
+	} else {
+		networkService = network.NewOpenStackNetworkNetworkService(
+			openstackClient.NetworkService(),
+			logger,
+		)
+	}
 
 	registryClient := registry.NewHTTPClient(
 		options.Registry,

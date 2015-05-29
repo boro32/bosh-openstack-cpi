@@ -6,18 +6,18 @@ import (
 	"github.com/rackspace/gophercloud"
 )
 
-const openstackNetworkServiceLogTag = "OpenStackNetworkService"
+const openstackNetworkNetworkServiceLogTag = "OpenStackNetworkNetworkService"
 
-type OpenStackNetworkService struct {
+type OpenStackNetworkNetworkService struct {
 	networkService *gophercloud.ServiceClient
 	logger         boshlog.Logger
 }
 
-func NewOpenStackNetworkService(
+func NewOpenStackNetworkNetworkService(
 	networkService *gophercloud.ServiceClient,
 	logger boshlog.Logger,
-) OpenStackNetworkService {
-	return OpenStackNetworkService{
+) OpenStackNetworkNetworkService {
+	return OpenStackNetworkNetworkService{
 		networkService: networkService,
 		logger:         logger,
 	}
