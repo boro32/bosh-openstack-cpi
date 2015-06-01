@@ -64,3 +64,13 @@ func (n Networks) SecurityGroupsList() (securityGroupsList []string) {
 
 	return securityGroupsList
 }
+
+func (n Networks) FloatingIP() string {
+	for _, network := range n {
+		if network.IsVip() {
+			return network.IPAddress()
+		}
+	}
+
+	return ""
+}

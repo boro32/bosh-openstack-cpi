@@ -168,4 +168,24 @@ var _ = Describe("Networks", func() {
 			})
 		})
 	})
+
+	Describe("FloatingIP", func() {
+		It("returns the IP address from the vip network", func() {
+			Expect(networks.FloatingIP()).To(Equal("fake-vip-network-ip"))
+		})
+
+		Context("when there is not a vip network", func() {
+			BeforeEach(func() {
+				networks = Networks{
+					"fake-dynamic-network": dynamicNetwork,
+					"fake-manual-network":  manualNetwork,
+				}
+			})
+
+			It("returns an empty IP address", func() {
+				Expect(networks.FloatingIP()).To(BeEmpty())
+			})
+		})
+
+	})
 })

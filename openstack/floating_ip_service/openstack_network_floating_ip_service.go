@@ -10,15 +10,18 @@ const openstackNetworkFloatingIPServiceLogTag = "OpenStackNetworkFloatingIPServi
 
 type OpenStackNetworkFloatingIPService struct {
 	networkService *gophercloud.ServiceClient
+	computeService *gophercloud.ServiceClient
 	logger         boshlog.Logger
 }
 
 func NewOpenStackNetworkFloatingIPService(
 	networkService *gophercloud.ServiceClient,
+	computeService *gophercloud.ServiceClient,
 	logger boshlog.Logger,
 ) OpenStackNetworkFloatingIPService {
 	return OpenStackNetworkFloatingIPService{
 		networkService: networkService,
+		computeService: computeService,
 		logger:         logger,
 	}
 }

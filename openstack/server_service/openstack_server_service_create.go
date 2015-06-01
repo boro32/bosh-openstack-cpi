@@ -49,6 +49,7 @@ func (i OpenStackServerService) Create(serverProps *Properties, networks Network
 		SecurityGroups:   securityGroupsParams,
 		UserData:         userdataParams,
 		ConfigDrive:      configDrive,
+		AdminPass:        "TODO",
 	}
 	createOpts = i.addKeyPairParams(createOpts, serverProps.KeyPair)
 	createOpts = i.addSchedulerHintsParams(createOpts, serverProps.SchedulerHints)

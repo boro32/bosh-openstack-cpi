@@ -85,6 +85,7 @@ var _ = Describe("ConcreteFactory", func() {
 		} else {
 			floatingIPService = floatingip.NewOpenStackNetworkFloatingIPService(
 				openstackClient.NetworkService(),
+				openstackClient.ComputeService(),
 				logger,
 			)
 		}

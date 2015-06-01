@@ -44,6 +44,7 @@ func NewConcreteFactory(
 	} else {
 		floatingIPService = floatingip.NewOpenStackNetworkFloatingIPService(
 			openstackClient.NetworkService(),
+			openstackClient.ComputeService(),
 			logger,
 		)
 	}
