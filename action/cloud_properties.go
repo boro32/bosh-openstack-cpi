@@ -29,6 +29,7 @@ type VMCloudProperties struct {
 	Flavor           string                     `json:"flavor,omitempty"`
 	AvailabilityZone string                     `json:"availability_zone,omitempty"`
 	KeyPair          string                     `json:"keypair,omitempty"`
+	RootDiskSizeGb   int                        `json:"root_disk_size_gb,omitempty"`
 	SchedulerHints   VMSchedulerHintsProperties `json:"scheduler_hints,omitempty"`
 }
 

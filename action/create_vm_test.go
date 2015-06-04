@@ -99,6 +99,7 @@ var _ = Describe("CreateVM", func() {
 			cloudProps = VMCloudProperties{
 				Flavor:           "fake-flavor",
 				AvailabilityZone: "",
+				RootDiskSizeGb:   0,
 				SchedulerHints: VMSchedulerHintsProperties{
 					Group:           "fake-scheduler-hints-group",
 					DifferentHost:   []string{"fake-scheduler-hints-different-host"},
@@ -129,6 +130,7 @@ var _ = Describe("CreateVM", func() {
 				FlavorID:         "fake-flavor-id",
 				AvailabilityZone: "",
 				KeyPair:          defaultKeyPair,
+				RootDiskSizeGb:   0,
 				SchedulerHints: server.SchedulerHintsProperties{
 					Group:           "fake-scheduler-hints-group",
 					DifferentHost:   []string{"fake-scheduler-hints-different-host"},
@@ -388,6 +390,31 @@ var _ = Describe("CreateVM", func() {
 			BeforeEach(func() {
 				cloudProps.KeyPair = "fake-keypair"
 				expectedServerProperties.KeyPair = "fake-keypair"
+			})
+
+			It("creates the vm at the right zone", func() {
+				vmCID, err = createVM.Run("fake-agent-id", "fake-stemcell-id", cloudProps, networks, disks, env)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(volumeService.FindCalled).To(BeFalse())
+				Expect(imageService.FindCalled).To(BeTrue())
+				Expect(flavorService.FindByNameCalled).To(BeTrue())
+				Expect(keypairService.FindCalled).To(BeTrue())
+				Expect(serverService.CreateCalled).To(BeTrue())
+				Expect(serverService.CleanUpCalled).To(BeFalse())
+				Expect(serverService.AddNetworkConfigurationCalled).To(BeTrue())
+				Expect(registryClient.UpdateCalled).To(BeTrue())
+				Expect(registryClient.UpdateSettings).To(Equal(expectedAgentSettings))
+				Expect(vmCID).To(Equal(VMCID("fake-server-id")))
+				Expect(serverService.CreateServerProps).To(Equal(expectedServerProperties))
+				Expect(serverService.CreateNetworks).To(Equal(expectedServerNetworks))
+				Expect(serverService.CreateRegistryEndpoint).To(Equal("http://fake-registry-host:25777"))
+			})
+		})
+
+		Context("when root disk size is set at cloud properties", func() {
+			BeforeEach(func() {
+				cloudProps.RootDiskSizeGb = 100
+				expectedServerProperties.RootDiskSizeGb = 100
 			})
 
 			It("creates the vm at the right zone", func() {

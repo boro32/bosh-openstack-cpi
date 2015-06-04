@@ -122,6 +122,7 @@ func (cv CreateVM) Run(agentID string, stemcellCID StemcellCID, cloudProps VMClo
 		FlavorID:         flavor.ID,
 		AvailabilityZone: availabilityZone,
 		KeyPair:          keyPair,
+		RootDiskSizeGb:   cloudProps.RootDiskSizeGb,
 		SchedulerHints: server.SchedulerHintsProperties{
 			Group:           cloudProps.SchedulerHints.Group,
 			DifferentHost:   cloudProps.SchedulerHints.DifferentHost,

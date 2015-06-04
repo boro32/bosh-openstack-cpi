@@ -7,6 +7,7 @@ import (
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
 
 	"github.com/frodenas/bosh-openstack-cpi/api"
+	"github.com/rackspace/gophercloud/openstack/compute/v2/extensions/bootfromvolume"
 	"github.com/rackspace/gophercloud/openstack/compute/v2/extensions/keypairs"
 	"github.com/rackspace/gophercloud/openstack/compute/v2/extensions/schedulerhints"
 	"github.com/rackspace/gophercloud/openstack/compute/v2/servers"
@@ -51,6 +52,7 @@ func (i OpenStackServerService) Create(serverProps *Properties, networks Network
 		ConfigDrive:      configDrive,
 		AdminPass:        "TODO",
 	}
+	createOpts = i.addBootFromVolumeParams(createOpts, serverProps.ImageID, serverProps.RootDiskSizeGb)
 	createOpts = i.addKeyPairParams(createOpts, serverProps.KeyPair)
 	createOpts = i.addSchedulerHintsParams(createOpts, serverProps.SchedulerHints)
 
@@ -68,6 +70,28 @@ func (i OpenStackServerService) Create(serverProps *Properties, networks Network
 func (i OpenStackServerService) CleanUp(id string) {
 	if err := i.Delete(id); err != nil {
 		i.logger.Debug(openstackServerServiceLogTag, "Failed cleaning up OpenStack Server '%s': %#v", id, err)
+	}
+}
+
+func (i OpenStackServerService) addBootFromVolumeParams(
+	createOpts servers.CreateOptsBuilder,
+	imageID string,
+	rootDiskSizeGb int,
+) *bootfromvolume.CreateOptsExt {
+	blockDevice := bootfromvolume.BlockDevice{
+		BootIndex:           0,
+		DeleteOnTermination: true,
+		DestinationType:     "volume",
+		SourceType:          bootfromvolume.SourceType("image"),
+		UUID:                imageID,
+	}
+	if rootDiskSizeGb > 0 {
+		blockDevice.VolumeSize = rootDiskSizeGb
+	}
+
+	return &bootfromvolume.CreateOptsExt{
+		createOpts,
+		[]bootfromvolume.BlockDevice{blockDevice},
 	}
 }
 

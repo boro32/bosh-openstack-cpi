@@ -28,6 +28,7 @@ type Properties struct {
 	FlavorID         string
 	AvailabilityZone string
 	KeyPair          string
+	RootDiskSizeGb   int
 	SchedulerHints   SchedulerHintsProperties
 }
 

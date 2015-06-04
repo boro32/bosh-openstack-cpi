@@ -139,6 +139,7 @@ These options are specified under `cloud_properties` at the [resource_pools](htt
 | flavor            | Y        | String | The name of the OpenStack flavor to be used when creating servers
 | availability_zone | N        | String | The name of the OpenStack availability zone to be used when creating servers
 | keypair           | N        | String | The name of the OpenStack keypair to be used when creating servers
+| root_disk_size_gb | N        | Integer| The size (in Gb) of the server root disk (only available when OpenStack `os-volumes_boot` extension is enabled, defaults to the `flavor` root disk size)
 | scheduler_hints   | N        | Hash   | List of OpenStack scheduler hints to be used when creating servers (see below for supported scheduler hints)
 
 These are the list of supported `scheduler_hints` options:
