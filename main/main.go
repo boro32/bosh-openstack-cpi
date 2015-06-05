@@ -67,7 +67,7 @@ func buildDispatcher(
 	cmdRunner boshsys.CmdRunner,
 	uuidGen boshuuid.Generator,
 ) (bocdisp.Dispatcher, error) {
-	openstackClient, err := client.NewOpenStackClient(config.OpenStack)
+	openstackClient, err := client.NewOpenStackClient(config.OpenStack, logger)
 	if err != nil {
 		return nil, err
 	}

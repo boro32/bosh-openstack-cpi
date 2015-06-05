@@ -2,8 +2,10 @@ package client
 
 import (
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
+	boshlog "github.com/cloudfoundry/bosh-utils/logger"
 
 	"github.com/frodenas/bosh-openstack-cpi/openstack/config"
+	"github.com/frodenas/bosh-openstack-cpi/openstack/extension_service"
 
 	"github.com/rackspace/gophercloud"
 	"github.com/rackspace/gophercloud/openstack"
@@ -14,10 +16,14 @@ type OpenStackClient struct {
 	computeService      *gophercloud.ServiceClient
 	blockstorageService *gophercloud.ServiceClient
 	networkService      *gophercloud.ServiceClient
+	computeExtensions   extension.OpenStackComputeExtensions
+	networkExtensions   extension.OpenStackNetworkExtensions
+	logger              boshlog.Logger
 }
 
 func NewOpenStackClient(
 	config config.Config,
+	logger boshlog.Logger,
 ) (OpenStackClient, error) {
 	authOptions := gophercloud.AuthOptions{
 		IdentityEndpoint: config.IdentityEndpoint,
@@ -46,16 +52,29 @@ func NewOpenStackClient(
 		return OpenStackClient{}, bosherr.WrapError(err, "Creating Compute Service")
 	}
 
+	computeExtensionService := extension.NewOpenStackComputeExtensionService(computeService, logger)
+	computeExtensions, err := computeExtensionService.List()
+	if err != nil {
+		return OpenStackClient{}, bosherr.WrapError(err, "Creating Compute Service")
+	}
+
 	blockstorageService, err := openstack.NewBlockStorageV1(providerClient, endpointOpts)
 	if err != nil {
 		return OpenStackClient{}, bosherr.WrapError(err, "Creating Block Storage Service")
 	}
 
 	var networkService *gophercloud.ServiceClient
+	var networkExtensions map[string]struct{}
 	if !config.DisableNeutron {
 		networkService, err = openstack.NewNetworkV2(providerClient, endpointOpts)
 		if err != nil {
 			return OpenStackClient{}, bosherr.WrapError(err, "Creating Network Service")
+		}
+
+		networkExtensionService := extension.NewOpenStackNetworkExtensionService(networkService, logger)
+		networkExtensions, err = networkExtensionService.List()
+		if err != nil {
+			return OpenStackClient{}, bosherr.WrapError(err, "Creating Compute Service")
 		}
 	}
 
@@ -64,6 +83,9 @@ func NewOpenStackClient(
 		computeService:      computeService,
 		blockstorageService: blockstorageService,
 		networkService:      networkService,
+		computeExtensions:   computeExtensions,
+		networkExtensions:   networkExtensions,
+		logger:              logger,
 	}, nil
 }
 
@@ -77,6 +99,14 @@ func (c OpenStackClient) BlockStorageService() *gophercloud.ServiceClient {
 
 func (c OpenStackClient) NetworkService() *gophercloud.ServiceClient {
 	return c.networkService
+}
+
+func (c OpenStackClient) ComputeExtensions() extension.OpenStackComputeExtensions {
+	return c.computeExtensions
+}
+
+func (c OpenStackClient) NetworkExtensions() extension.OpenStackNetworkExtensions {
+	return c.networkExtensions
 }
 
 func (c OpenStackClient) DefaultKeyPair() string {
