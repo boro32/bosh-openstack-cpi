@@ -7,9 +7,9 @@ import (
 	"github.com/rackspace/gophercloud/openstack/compute/v2/servers"
 )
 
-func (i OpenStackServerService) Find(id string) (*servers.Server, bool, error) {
-	i.logger.Debug(openstackServerServiceLogTag, "Finding OpenStack Server '%s'", id)
-	instance, err := servers.Get(i.computeService, id).Extract()
+func (s OpenStackServerService) Find(id string) (*servers.Server, bool, error) {
+	s.logger.Debug(openstackServerServiceLogTag, "Finding OpenStack Server '%s'", id)
+	instance, err := servers.Get(s.computeService, id).Extract()
 	if err != nil {
 		errCode, _ := err.(*gophercloud.UnexpectedResponseCodeError)
 		if errCode.Actual == 404 {

@@ -11,8 +11,8 @@ import (
 	"github.com/rackspace/gophercloud/openstack/compute/v2/servers"
 )
 
-func (i OpenStackServerService) AddNetworkConfiguration(id string, networks Networks) error {
-	server, found, err := i.Find(id)
+func (s OpenStackServerService) AddNetworkConfiguration(id string, networks Networks) error {
+	server, found, err := s.Find(id)
 	if err != nil {
 		return err
 	}
@@ -20,7 +20,7 @@ func (i OpenStackServerService) AddNetworkConfiguration(id string, networks Netw
 		return api.NewVMNotFoundError(id)
 	}
 
-	err = i.associateFloatingIP(server, networks)
+	err = s.associateFloatingIP(server, networks)
 	if err != nil {
 		return err
 	}
@@ -28,8 +28,8 @@ func (i OpenStackServerService) AddNetworkConfiguration(id string, networks Netw
 	return nil
 }
 
-func (i OpenStackServerService) DeleteNetworkConfiguration(id string) error {
-	server, found, err := i.Find(id)
+func (s OpenStackServerService) DeleteNetworkConfiguration(id string) error {
+	server, found, err := s.Find(id)
 	if err != nil {
 		return err
 	}
@@ -37,7 +37,7 @@ func (i OpenStackServerService) DeleteNetworkConfiguration(id string) error {
 		return api.NewVMNotFoundError(id)
 	}
 
-	err = i.disassociateFloatingIP(server)
+	err = s.disassociateFloatingIP(server)
 	if err != nil {
 		return err
 	}
@@ -45,24 +45,24 @@ func (i OpenStackServerService) DeleteNetworkConfiguration(id string) error {
 	return nil
 }
 
-func (i OpenStackServerService) UpdateNetworkConfiguration(id string, networks Networks) error {
-	server, found, err := i.Find(id)
+func (s OpenStackServerService) UpdateNetworkConfiguration(id string, networks Networks) error {
+	server, found, err := s.Find(id)
 	if err != nil {
 		return err
 	}
 	if !found {
 		return api.NewVMNotFoundError(id)
 	}
-	i.logger.Debug(openstackServerServiceLogTag, "OpenStack Server %#v", server)
+	s.logger.Debug(openstackServerServiceLogTag, "OpenStack Server %#v", server)
 
 	// TODO: Compare networks/private ip addresses
 
-	err = i.updateSecurityGroups(server, networks)
+	err = s.updateSecurityGroups(server, networks)
 	if err != nil {
 		return err
 	}
 
-	err = i.updateFloatingIP(server, networks)
+	err = s.updateFloatingIP(server, networks)
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func (i OpenStackServerService) UpdateNetworkConfiguration(id string, networks N
 	return nil
 }
 
-func (i OpenStackServerService) floatingIP(server *servers.Server) (floatingIP string) {
+func (s OpenStackServerService) floatingIP(server *servers.Server) (floatingIP string) {
 	for _, addresses := range server.Addresses {
 		for _, addressItem := range addresses.([]interface{}) {
 			address := addressItem.(map[string]interface{})
@@ -84,13 +84,13 @@ func (i OpenStackServerService) floatingIP(server *servers.Server) (floatingIP s
 	return
 }
 
-func (i OpenStackServerService) associateFloatingIP(server *servers.Server, networks Networks) error {
+func (s OpenStackServerService) associateFloatingIP(server *servers.Server, networks Networks) error {
 	networkFloatingIP := networks.FloatingIP()
 	if networkFloatingIP == "" {
 		return nil
 	}
 
-	_, found, err := i.floatingIPService.FindByIP(networkFloatingIP)
+	_, found, err := s.floatingIPService.FindByIP(networkFloatingIP)
 	if err != nil {
 		return err
 	}
@@ -98,29 +98,29 @@ func (i OpenStackServerService) associateFloatingIP(server *servers.Server, netw
 		return bosherr.Errorf("OpenStack Floating IP '%s' not found", networkFloatingIP)
 	}
 
-	if err := i.floatingIPService.Associate(networkFloatingIP, server.ID); err != nil {
+	if err := s.floatingIPService.Associate(networkFloatingIP, server.ID); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (i OpenStackServerService) updateFloatingIP(server *servers.Server, networks Networks) error {
+func (s OpenStackServerService) updateFloatingIP(server *servers.Server, networks Networks) error {
 	networkFloatingIP := networks.FloatingIP()
-	serverFloatingIP := i.floatingIP(server)
+	serverFloatingIP := s.floatingIP(server)
 
 	if networkFloatingIP == serverFloatingIP {
 		return nil
 	}
 
 	if serverFloatingIP != "" {
-		if err := i.floatingIPService.Disassociate(serverFloatingIP, server.ID); err != nil {
+		if err := s.floatingIPService.Disassociate(serverFloatingIP, server.ID); err != nil {
 			return err
 		}
 	}
 
 	if networkFloatingIP != "" {
-		_, found, err := i.floatingIPService.FindByIP(networkFloatingIP)
+		_, found, err := s.floatingIPService.FindByIP(networkFloatingIP)
 		if err != nil {
 			return err
 		}
@@ -128,7 +128,7 @@ func (i OpenStackServerService) updateFloatingIP(server *servers.Server, network
 			return bosherr.Errorf("OpenStack Floating IP '%s' not found", networkFloatingIP)
 		}
 
-		if err := i.floatingIPService.Associate(networkFloatingIP, server.ID); err != nil {
+		if err := s.floatingIPService.Associate(networkFloatingIP, server.ID); err != nil {
 			return err
 		}
 	}
@@ -136,20 +136,20 @@ func (i OpenStackServerService) updateFloatingIP(server *servers.Server, network
 	return nil
 }
 
-func (i OpenStackServerService) disassociateFloatingIP(server *servers.Server) error {
-	serverFloatingIP := i.floatingIP(server)
+func (s OpenStackServerService) disassociateFloatingIP(server *servers.Server) error {
+	serverFloatingIP := s.floatingIP(server)
 	if serverFloatingIP == "" {
 		return nil
 	}
 
-	if err := i.floatingIPService.Disassociate(serverFloatingIP, server.ID); err != nil {
+	if err := s.floatingIPService.Disassociate(serverFloatingIP, server.ID); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (i OpenStackServerService) updateSecurityGroups(server *servers.Server, networks Networks) error {
+func (s OpenStackServerService) updateSecurityGroups(server *servers.Server, networks Networks) error {
 	var serverSecurityGroups []string
 	for _, secgrp := range server.SecurityGroups {
 		serverSecurityGroups = append(serverSecurityGroups, secgrp["name"].(string))
@@ -157,7 +157,7 @@ func (i OpenStackServerService) updateSecurityGroups(server *servers.Server, net
 
 	networkSecurityGroups := networks.SecurityGroupsList()
 	if len(networkSecurityGroups) == 0 {
-		networkSecurityGroups = i.defaultSecurityGroups
+		networkSecurityGroups = s.defaultSecurityGroups
 	}
 
 	sort.Strings(networkSecurityGroups)
@@ -166,8 +166,8 @@ func (i OpenStackServerService) updateSecurityGroups(server *servers.Server, net
 		return nil
 	}
 
-	i.logger.Debug(openstackServerServiceLogTag, "Changing OpenStack security groups for OpenStack server '%s' not supported", server.Name)
-	i.logger.Debug(openstackServerServiceLogTag, "Server Security Groups: %#v", serverSecurityGroups)
-	i.logger.Debug(openstackServerServiceLogTag, "Network Security Groups: %#v", networkSecurityGroups)
+	s.logger.Debug(openstackServerServiceLogTag, "Changing OpenStack security groups for OpenStack server '%s' not supported", server.Name)
+	s.logger.Debug(openstackServerServiceLogTag, "Server Security Groups: %#v", serverSecurityGroups)
+	s.logger.Debug(openstackServerServiceLogTag, "Network Security Groups: %#v", networkSecurityGroups)
 	return api.NotSupportedError{}
 }

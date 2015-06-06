@@ -6,15 +6,15 @@ import (
 	"github.com/rackspace/gophercloud/openstack/compute/v2/extensions/volumeattach"
 )
 
-func (i OpenStackServerService) AttachVolume(id string, volumeID string) (string, string, error) {
+func (s OpenStackServerService) AttachVolume(id string, volumeID string) (string, string, error) {
 	var deviceName, devicePath string
 
 	createOps := &volumeattach.CreateOpts{
 		VolumeID: volumeID,
 	}
 
-	i.logger.Debug(openstackServerServiceLogTag, "Attaching OpenStack Volume '%s' to OpenStack Server '%s'", volumeID, id)
-	volumeAttachment, err := volumeattach.Create(i.computeService, id, createOps).Extract()
+	s.logger.Debug(openstackServerServiceLogTag, "Attaching OpenStack Volume '%s' to OpenStack Server '%s'", volumeID, id)
+	volumeAttachment, err := volumeattach.Create(s.computeService, id, createOps).Extract()
 	if err != nil {
 		return deviceName, devicePath, bosherr.WrapErrorf(err, "Failed to attach OpenStack Volume '%s' to OpenStack Server '%s'", volumeID, id)
 	}

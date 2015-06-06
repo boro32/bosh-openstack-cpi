@@ -13,31 +13,31 @@ import (
 	"github.com/rackspace/gophercloud/openstack/compute/v2/servers"
 )
 
-func (i OpenStackServerService) Create(serverProps *Properties, networks Networks, registryEndpoint string) (string, error) {
+func (s OpenStackServerService) Create(serverProps *Properties, networks Networks, registryEndpoint string) (string, error) {
 	var createOpts servers.CreateOptsBuilder
 
-	uuidStr, err := i.uuidGen.Generate()
+	uuidStr, err := s.uuidGen.Generate()
 	if err != nil {
 		return "", bosherr.WrapErrorf(err, "Generating random OpenStack Server name")
 	}
 
 	serverName := fmt.Sprintf("%s-%s", openstackServerNamePrefix, uuidStr)
-	networksParams, err := i.createNetworksParams(networks)
+	networksParams, err := s.createNetworksParams(networks)
 	if err != nil {
 		return "", err
 	}
-	securityGroupsParams, err := i.createSecurityGroupsParams(networks)
+	securityGroupsParams, err := s.createSecurityGroupsParams(networks)
 	if err != nil {
 		return "", err
 	}
 
-	userdataParams, err := i.createUserdataParams(serverName, registryEndpoint, networks)
+	userdataParams, err := s.createUserdataParams(serverName, registryEndpoint, networks)
 	if err != nil {
 		return "", err
 	}
 
 	configDrive := true
-	if i.disableConfigDrive {
+	if s.disableConfigDrive {
 		configDrive = false
 	}
 
@@ -52,28 +52,28 @@ func (i OpenStackServerService) Create(serverProps *Properties, networks Network
 		ConfigDrive:      configDrive,
 		AdminPass:        "TODO",
 	}
-	createOpts = i.addBootFromVolumeParams(createOpts, serverProps.ImageID, serverProps.RootDiskSizeGb)
-	createOpts = i.addKeyPairParams(createOpts, serverProps.KeyPair)
-	createOpts = i.addSchedulerHintsParams(createOpts, serverProps.SchedulerHints)
+	createOpts = s.addBootFromVolumeParams(createOpts, serverProps.ImageID, serverProps.RootDiskSizeGb)
+	createOpts = s.addKeyPairParams(createOpts, serverProps.KeyPair)
+	createOpts = s.addSchedulerHintsParams(createOpts, serverProps.SchedulerHints)
 
 	serverOpts, _ := createOpts.ToServerCreateMap()
-	i.logger.Debug(openstackServerServiceLogTag, "Creating OpenStack Server with params: %#v", serverOpts)
-	server, err := servers.Create(i.computeService, createOpts).Extract()
+	s.logger.Debug(openstackServerServiceLogTag, "Creating OpenStack Server with params: %#v", serverOpts)
+	server, err := servers.Create(s.computeService, createOpts).Extract()
 	if err != nil {
-		i.logger.Debug(openstackServerServiceLogTag, "Failed to create OpenStack Server: %#v", err)
+		s.logger.Debug(openstackServerServiceLogTag, "Failed to create OpenStack Server: %#v", err)
 		return "", api.NewVMCreationFailedError(true)
 	}
 
 	return server.ID, nil
 }
 
-func (i OpenStackServerService) CleanUp(id string) {
-	if err := i.Delete(id); err != nil {
-		i.logger.Debug(openstackServerServiceLogTag, "Failed cleaning up OpenStack Server '%s': %#v", id, err)
+func (s OpenStackServerService) CleanUp(id string) {
+	if err := s.Delete(id); err != nil {
+		s.logger.Debug(openstackServerServiceLogTag, "Failed cleaning up OpenStack Server '%s': %#v", id, err)
 	}
 }
 
-func (i OpenStackServerService) addBootFromVolumeParams(
+func (s OpenStackServerService) addBootFromVolumeParams(
 	createOpts servers.CreateOptsBuilder,
 	imageID string,
 	rootDiskSizeGb int,
@@ -95,7 +95,7 @@ func (i OpenStackServerService) addBootFromVolumeParams(
 	}
 }
 
-func (i OpenStackServerService) addKeyPairParams(
+func (s OpenStackServerService) addKeyPairParams(
 	createOpts servers.CreateOptsBuilder,
 	keypair string,
 ) *keypairs.CreateOptsExt {
@@ -105,7 +105,7 @@ func (i OpenStackServerService) addKeyPairParams(
 	}
 }
 
-func (i OpenStackServerService) addSchedulerHintsParams(
+func (s OpenStackServerService) addSchedulerHintsParams(
 	createOpts servers.CreateOptsBuilder,
 	schedulerHintsProperties SchedulerHintsProperties,
 ) *schedulerhints.CreateOptsExt {
@@ -141,16 +141,16 @@ func (i OpenStackServerService) addSchedulerHintsParams(
 	}
 }
 
-func (i OpenStackServerService) createNetworksParams(networks Networks) ([]servers.Network, error) {
+func (s OpenStackServerService) createNetworksParams(networks Networks) ([]servers.Network, error) {
 	var networksParams []servers.Network
 
-	if i.disableNeutron {
+	if s.disableNeutron {
 		return networksParams, nil
 	}
 
 	for _, network := range networks {
 		if networkName := network.NetworkName(); networkName != "" {
-			net, found, err := i.networkService.FindByName(networkName)
+			net, found, err := s.networkService.FindByName(networkName)
 			if err != nil {
 				return networksParams, err
 			}
@@ -170,11 +170,11 @@ func (i OpenStackServerService) createNetworksParams(networks Networks) ([]serve
 	return networksParams, nil
 }
 
-func (i OpenStackServerService) createSecurityGroupsParams(networks Networks) ([]string, error) {
+func (s OpenStackServerService) createSecurityGroupsParams(networks Networks) ([]string, error) {
 	var securityGroupsParams []string
 
 	for _, securityGroup := range networks.SecurityGroupsList() {
-		_, found, err := i.securityGroupService.FindByName(securityGroup)
+		_, found, err := s.securityGroupService.FindByName(securityGroup)
 		if err != nil {
 			return securityGroupsParams, err
 		}
@@ -189,10 +189,10 @@ func (i OpenStackServerService) createSecurityGroupsParams(networks Networks) ([
 		return securityGroupsParams, nil
 	}
 
-	return i.defaultSecurityGroups, nil
+	return s.defaultSecurityGroups, nil
 }
 
-func (i OpenStackServerService) createUserdataParams(name string, registryEndpoint string, networks Networks) ([]byte, error) {
+func (s OpenStackServerService) createUserdataParams(name string, registryEndpoint string, networks Networks) ([]byte, error) {
 	openstackServerName := OpenStackUserDataServerName{Name: name}
 	openstackRegistryEndpoint := OpenStackUserDataRegistryEndpoint{Endpoint: registryEndpoint}
 	openstackUserData := OpenStackUserData{Server: openstackServerName, Registry: openstackRegistryEndpoint}

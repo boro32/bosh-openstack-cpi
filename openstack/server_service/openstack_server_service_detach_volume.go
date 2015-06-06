@@ -8,10 +8,10 @@ import (
 	"github.com/rackspace/gophercloud/pagination"
 )
 
-func (i OpenStackServerService) DetachVolume(id string, volumeID string) error {
+func (s OpenStackServerService) DetachVolume(id string, volumeID string) error {
 	// Look up for the device name
 	var volumeAttachmentID string
-	pager := volumeattach.List(i.computeService, id)
+	pager := volumeattach.List(s.computeService, id)
 	err := pager.EachPage(func(page pagination.Page) (bool, error) {
 		volumeAttachments, err := volumeattach.ExtractVolumeAttachments(page)
 		if err != nil {
@@ -36,8 +36,8 @@ func (i OpenStackServerService) DetachVolume(id string, volumeID string) error {
 	}
 
 	// Detach the volume
-	i.logger.Debug(openstackServerServiceLogTag, "Detaching OpenStack Volume '%s' from OpenStack Server '%s'", volumeID, id)
-	if err = volumeattach.Delete(i.computeService, id, volumeAttachmentID).ExtractErr(); err != nil {
+	s.logger.Debug(openstackServerServiceLogTag, "Detaching OpenStack Volume '%s' from OpenStack Server '%s'", volumeID, id)
+	if err = volumeattach.Delete(s.computeService, id, volumeAttachmentID).ExtractErr(); err != nil {
 		return bosherr.WrapErrorf(err, "Failed to detach OpenStack Volume '%s' from OpenStack Server '%s'", volumeID, id)
 	}
 

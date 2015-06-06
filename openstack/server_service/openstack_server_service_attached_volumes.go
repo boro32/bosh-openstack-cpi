@@ -8,11 +8,11 @@ import (
 	"github.com/rackspace/gophercloud/pagination"
 )
 
-func (i OpenStackServerService) AttachedVolumes(id string) (AttachedVolumes, error) {
+func (s OpenStackServerService) AttachedVolumes(id string) (AttachedVolumes, error) {
 	var volumes AttachedVolumes
 
-	i.logger.Debug(openstackServerServiceLogTag, "Finding OpenStack Volumes attached to OpenStack Server '%s'", id)
-	pager := volumeattach.List(i.computeService, id)
+	s.logger.Debug(openstackServerServiceLogTag, "Finding OpenStack Volumes attached to OpenStack Server '%s'", id)
+	pager := volumeattach.List(s.computeService, id)
 	err := pager.EachPage(func(page pagination.Page) (bool, error) {
 		volumeAttachments, err := volumeattach.ExtractVolumeAttachments(page)
 		if err != nil {

@@ -7,9 +7,9 @@ import (
 	"github.com/rackspace/gophercloud/openstack/compute/v2/servers"
 )
 
-func (i OpenStackServerService) Delete(id string) error {
-	i.logger.Debug(openstackServerServiceLogTag, "Deleting OpenStack Server '%s'", id)
-	if err := servers.Delete(i.computeService, id).ExtractErr(); err != nil {
+func (s OpenStackServerService) Delete(id string) error {
+	s.logger.Debug(openstackServerServiceLogTag, "Deleting OpenStack Server '%s'", id)
+	if err := servers.Delete(s.computeService, id).ExtractErr(); err != nil {
 		errCode, _ := err.(*gophercloud.UnexpectedResponseCodeError)
 		if errCode.Actual == 404 {
 			return bosherr.WrapErrorf(err, "OpenStack Server '%s' does not exists", id)
